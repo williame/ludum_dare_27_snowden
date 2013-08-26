@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--
+Copyright (C) 2013 William Edwards.  All rights reserved.
+
+This program is free software; you can redistribute it and/or 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed WITHOUT ANY WARRANTY; without even the 
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-->
+<head><title>NSA Cyber Remote Analyst Portal</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+body { 
+	border:0px;margin:0px;padding:0px;
+	background-color:#004e98; color:white;
+	font-family:sans-serif;
+}
+.BackgroundWatermark {
+	z-index: -1;
+	top: 0px; left: 0px; height: 100%; width: 100%;
+	position: fixed; overflow: auto;
+	background-image:url("nsa-logo-transdark.png");
+	background-repeat:no-repeat; background-attachment:fixed; background-position:center;
+	opacity:0.2;
+}
+.Unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select:none;
+}
+.Resizeable {
+	resize:both;
+}
+.Frame {
+	border:ridge;margin:0px;padding:0px;
+	background-color:white; color:black;
+	position:absolute;display:none;
+	overflow:hidden;
+}
+.Frame>.Contents {
+	overflow:auto;
+	min-width:320px;min-height:100px;width:480px;height:320px;
+}
+.Frame>.TitleBar {
+	background-color:navy; color:white;
+	padding:2px;
+	font-size:20px; font-weight:bold;
+	cursor:default;
+	overflow:hidden;
+}
+.Buttons {
+	position:absolute; top:0px; right:0px; margin:2px;
+	background-color:inherit;
+}
+.Frame>.Contents>.Terminal {
+	color:#00CC00;
+	padding:2px;
+	font-family:monospace;
+}
+.CommandLine {
+	display:table;
+	width:100%;
+}
+.CommandPrompt {
+	display:table-cell;
+	white-space: nowrap;
+	width:1px;
+}
+.CommandWrap {
+	display:table-cell;
+	padding-left:1em;
+}
+.CommandInput {
+	resize:none;
+	width:100%;
+	text-transform:uppercase;
+	border:none; outline:none;
+	font-family:monospace; background:inherit; color:inherit;
+}
+.CommandInput:focus {
+	outline:none;
+}
+.TaskBar {
+	position:fixed; bottom:0px; width:100%; padding:2px; display:table;
+	background:lightgray;
+	border:outset 1px;
+}
+.TaskBar>.FramePicker {
+	margin:2px; padding:2px; margin-left:1em; display:table-cell;
+	border:inset 1px;
+}
+.StartMenu {
+	position:fixed; left:10px; bottom:10px; z-index:99999;
+	border:outset 2px; background-color:lightgray;
+	display:none;
+}
+.StartMenu>.Button {
+	border:none;
+	display:block;
+}
+.Button {
+	border:outset; margin:2px; padding:2px; display:inline-block;
+	margin-right:10px;
+	font-size:18px;
+	background-color:lightgray; color:black; cursor:default;
+}
+.TabBar {
+	overflow-x:auto; overflow-y:hidden; resize:none;
+	white-space:nowrap;
+}
+.TabBar>.Button {
+	border:inset; margin:0px;
+}
+.TabBar>.Selected {
+	background-color:white; border:outset; border-bottom:none;
+}
+.Icon {
+	margin-top: auto; margin-bottom: auto; cursor:default;
+	width:20px; height:20px; text-align:center;
+}
+.MessagePicker {
+	background-color:AntiqueWhite;
+	border:outset; margin:2px; padding:2px; padding-left:8px; padding-right:8px;
+}
+.MessagePickerUnread {
+	background-color:salmon;
+	border:outset; margin:2px; padding:2px; padding-left:8px; padding-right:8px;
+}
+.MessageBody {
+	padding:10px;
+}
+.Contents>.Canvas {
+	margin:10px;
+}
+.Paperclip {
+	position:absolute; right:10px; bottom:10px;
+	overflow:auto;	z-index: 1000000;
+}
+.PaperclipSpeech {
+	position:absolute; right:30px; bottom:145px; padding:10px;
+	-moz-border-radius: 15px; border-radius: 15px; border-color:orange; border-width:3px; border-style:solid;
+	color:black; background-color:beige;
+	z-index: 1000001;
+}
+.Clock {
+	position:absolute; right:10px; bottom:10px; z-index:999999; color:black; background-color:lightgray;
+}
+.Dossier {
+	margin:10px;
+}
+.Booking {
+	cursor:pointer; white-space:nowrap; display:block;
+}
+#loading {
+	position:absolute; width:100%; z-index: 1000002;
+	color:yellow; background-color:crimson; text-align:center;
+	font-size:24pt; font-weight:bold;
+}
+#stop {
+	position:absolute; width:100%; height:100%; z-index: 1000004; text-align:center; display:none; background-color:black;
+}
+#login {
+	position:absolute; width:100%; height:100%; z-index: 1000003;
+	background-color:dimgray; background-repeat:no-repeat; background-image:url("logo_windows-GOV.png"); background-position:right bottom;
+}
+</style>
+<script type="text/javascript"><!--
+
+var self = window;
+window.onerror = function(error) {
+	fail(error);
+}
+function isOnGithubPages() {
+	return window.location.hostname.indexOf(".github.") > 0;
+}
+function isLocalHost() {
+	return "file:" === window.location.protocol || window.location.hostname == "localhost";
+}
+window.requestAnimFrame = 
+	window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.oRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function(callback) {
+		window.setTimeout(callback,1000/60);
+	};
+
+var gl; // because we borrow barebones.js glutil
+
+//-->
+
+</script>
+<script type="text/javascript" src="web_worker.js"></script>
+<script type="text/javascript" src="desktop.js"></script>
+<script type="text/javascript" src="glutil.js"></script>
+<script type="text/javascript" src="world_map.js"></script>
+<script type="text/javascript" src="dossier.js"></script>
+<script type="text/javascript" src="sql.js"></script> <!-- helps debug it -->
+<script type="text/javascript" src="game_data.js"></script>
+<script type="text/javascript" src="game_gen.js"></script>
+<script type="text/javascript" src="game_sim.js"></script>
+<script type="text/javascript"><!--
+var game, taskBar, prism, mail, globe, paperclip, dossier;
+function init() {
+	game = new WebWorker(["sql.js","game_data.js","game_gen.js","game_sim.js","game.js"],"gameWorker");
+	window.sendMessage = function(data) { // global name used in WebWorkers, useful if synthesised
+		if(data.zeroHour)
+			zeroHour = data.zeroHour;
+		if(data.watchlist)
+			dossier = new Dossier(data.watchlist);
+		if(data.tasks) {
+			for(var task in data.tasks) {
+				task = data.tasks[task];
+				switch(task.type) {
+				case "addMessage":
+					mail.addMessage(task.message);
+					break;
+				default:
+					fail("unsupported task type:"+task);
+				}
+			}
+		} else if("flight" in data) {
+			globe.onMessage(data);
+		} else if(data.cmd == "stop") {
+			var stop = document.getElementById("stop");
+			stop.style.display = "block";
+			stop.innerHTML = '<img src="'+(data.win?"success":"failure")+'_splash.jpg"/>';
+		} else {
+			console.log("unhandled message from WebWorker:",data);
+			fail("unhandled message from WebWorker");
+		}
+	};
+	game.defaultCallback = sendMessage;
+	game.onmessage = sendMessage;
+	if(!WebWorker.prototype.synthesised) // we want to debug, we'd appreciate the chance to start the debugger instead
+		game.send({cmd:"init"},null,function() { document.getElementById("loading").style.display = "none"; });			
+	taskBar = new TaskBar();
+	prism = new PRISM();
+	mail = new Mail();
+	globe = new IFCU();
+	paperclip = new Paperclip();
+	mail.activate(); // bring to top
+}
+//--></script>
+<body onload="init()">
+<div id="loading">LOADING...</div>
+<div id="stop"></div>
+<div id="login">
+	<noscript>
+	<div class="error">Sorry, you don't have Javascript enabled :(</div>
+	</noscript>
+	<div style="width:400px; margin:0 auto; text-align:center; top:100px; position:relative; border:solid red; background-color:gray; color:white;">
+		<p><big>NSA Cyber Remote Analyst Portal</big></p>
+		<p><big><font color="red"><b>TOP SECRET LOGIN</b></font></big></p>
+		<hr/>
+		<form onsubmit="login(this); return false;">
+		<table cellpadding="10" style="width:100%;"><tr><td align="right" align="left">user-name:</td><td align="left"><input type="text" id="userName" value="Agent 84"/></tr>
+		<tr><td align="right">password:</td><td align="left"><input type="password" id="password" value="1"/></tr>
+		<tr><td></td><td align="left"><input type="submit" value="log in" class="Button"/></td></tr></table>
+		</form>
+		<script type="text/javascript">
+			function login(form) {
+				var	userName = form.querySelector("#userName"),
+					password = form.querySelector("#password");
+				if(!userName.value.trim().length) {
+					alert("userName cannot be left blank!");
+					userName.focus();
+				} else if(!password.value.length) {
+					alert("a secure password must be at least 1 characters long!");
+					password.focus();
+				} else {
+					document.getElementById("login").style.display = "none";
+					playerName = userName.value.trim();
+					if(WebWorker.prototype.synthesised)
+						game.send({cmd:"init"},null,function() { document.getElementById("loading").style.display = "none"; });
+					game.send({cmd:"start",playerName:playerName,});
+				}
+			}
+			document.getElementById("userName").focus();
+		</script>
+	</div>
+</div>
+<div class="BackgroundWatermark"></div>
+<img id="WorldMap" src="Map_640-480.jpg" style="display:none;"/>
+<script type="text/javascript">
+if(isOnGithubPages()) {
+	var ghProject = "https://github.com/"+
+		window.location.hostname.substr(0,window.location.hostname.indexOf(".github."))+"/"+
+		window.location.pathname.split("/")[1];
+	document.write('<a href="'+ghProject+'" style="position:absolute; top:0; right:0; border:0; z-order:1000003;">'+
+		'<img src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>');
+}
+</script>
+</body>
+</html>
