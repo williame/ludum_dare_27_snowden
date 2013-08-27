@@ -367,7 +367,7 @@ function Paperclip() {
 		'<p>Can I help you with that?</p>'+
 		'<ul>'+
 		'<li id="qWatchlist">I would like to see who is on the watchlist</li>'+
-		'<li id="qRussiaFlight">I would like to see all flights leaving a particular Russia</li>'+
+		'<li id="qRussiaFlight">I would like to see all flights leaving Russia</li>'+
 		'<li id="qParFlight">I would like to see everybody taking a particular flight</li>'+
 		'<li id="qHostileFlights">I would like to see everybody landing in a hostile country</li>'+
 		'<li id="qParFlights">I would like to see everybody who took two particular flights</li>'+
@@ -402,7 +402,27 @@ function Paperclip() {
 		"<h3>How can I select only some of the rows in a table?</h3>"+
 		"<p>This is done using the <code>WHERE</code> clause.  E.g. <code>SELECT * FROM airports WHERE category = 'hostile'</code></p>"+ 
 		"<h3>How can I show rows in one table that are referenced from another?</h3>"+
-		"<p>This is called <b><i>joining</i></b>.  PRISM SQL Supports a very basic form;";
+		"<p>This is called <b><i>joining</i></b>.  PRISM SQL Supports a very basic form using the <code>WHERE</code> clause.</p>"+
+		'<p id="qRussiaFlight">E.g. to see all the flights leaving Russia:</p>'+
+		"<p><code>SELECT * FROM AIRPORTS AS A, FLIGHTS AS F WHERE F.DEPART = A.CODE AND A.COUNTRY = 'RUSSIA'</code></p>"+
+		"<p>Notice the use of <code>AS <i>alias</i></code>; this tidies up queries a lot!</p>"+
+		'<h3 id="qParFlight">How can I see who is taking a particular flight?</h3>'+
+		"<p><code>SELECT T.* FROM TARGETS AS T, MANIFESTS AS M WHERE M.PASS = T.PASS AND M.FLIGHT = 'BA-26'</code></p>"+
+		'<h3 id="qHostileFlights">How can I see the flights landing in a particular category of country?</h3>'+
+		"<p><code>SELECT F.CODE, F.ARRIVE, F.ARRIVAL_TIME FROM AIRPORTS AS A, FLIGHTS AS F WHERE F.ARRIVE = A.CODE AND A.CATEGORY='HOSTILE'</code></p>"+
+		'<h3 id="qParFlights">How can I see everyone who took two flights?</h3>'+
+		"<p>If you're getting the hang of this joining business:</p>"+
+		"<p><code>SELECT M.PASS FROM MANIFESTS AS M, MANIFESTS AS M2 WHERE M.PASS = M2.PASS AND M.FLIGHT = 'AF-321' AND M2.FLIGHT = 'IB-794'</code></p>"+
+		"<p>This will show you a list of passport numbers, but to see the passenger names too we also have to join in the <code>Targets</code> table.  This will take a lot longer to compute:</p>"+
+		"<p><code>SELECT T.* FROM MANIFESTS AS M, MANIFESTS AS M2, TARGETS AS T WHERE T.PASS = M.PASS AND M.PASS = M2.PASS AND M.FLIGHT = 'AF-321' AND M2.FLIGHT = 'IB-794'</code></p>"+
+		"<h3>Filtering by dates</h3>"+
+		"<p>Date strings can be compared using <code>&lt;</code>, <code>&gt;=</code> etc.  There is also a constant called <code>now</code>.  E.g. to see all the flights currently in the air:</p>"+
+		"<p><code>SELECT * FROM FLIGHTS WHERE DEPARTURE_TIME >= NOW AND ARRIVAL_TIME <= NOW</code></p>"+
+		"<h3>Can I add rows too?</h3>"+
+		"<p><code>INSERT INTO <i>table</i> (<i>field1</i>,...) VALUES (<i>value1</i>,...);</code></p>"+
+		"<p>There's more!  <code>DELETE FROM</code> and <code>UPDATE <i>table</i> SET</code> are also supported!</p>"+
+		"<h3>There's a bug in this SQL engine!</h3>"+
+		"<p>What do you expect?!?!?  We wrote it from scratch in a day, in client-side Javascript!  We're dead proud it works at all!</p>";
 }
 Paperclip.prototype = {
 	activate: function() {
